@@ -1,3 +1,8 @@
+/**
+ * @author Brennen Davis
+ * @version 1.0
+ */
+
 package wowArmory;
 
 import java.io.PrintWriter;
@@ -9,6 +14,16 @@ public class Execute {
 	
 	private ArrayList<String> slotsString = new ArrayList<String>();
 
+	/**
+	 * Pull Elements will go to the player's armory page and get the player's iLvl and Armory iLvl. 
+	 * If the URL or an Item is not available or being worn it will let you know.
+	 * 
+	 * @param driver - the WebDriver
+	 * @param url - URL to which the driver will go to
+	 * @param player - which Player is currently calling pullElements
+	 * @param server - which Server is currently calling pullElements
+	 * @return String - an error message if needs be
+	 */
 	public String pullElements(WebDriver driver, String url, String player, String server){	
 		
 		ArrayList<String> slotNames = new ArrayList<String>();
@@ -117,12 +132,15 @@ public class Execute {
 		}catch(Exception e){
 			//System.out.println(e.getMessage());
 			System.out.println("Couldn't find " + player + " on " + server + ".");
-			return "Couldn't find " + player + " on " + server + ".";
+			return "Couldn't find " + player + " on " + server + ". ";
 		}
 		return "";
 	}
 	
-	
+	/**
+	 * Write the CSV file. Must be called after Pull Elements.
+	 * @param filePath - give the file name
+	 */
 	public void writeToFile(String filePath){
 
 		try(PrintWriter writer = new PrintWriter(System.getProperty("user.home") + "/Desktop/"+filePath+".csv")){				

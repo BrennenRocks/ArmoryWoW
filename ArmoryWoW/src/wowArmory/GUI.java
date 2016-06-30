@@ -1,3 +1,7 @@
+/**
+ * @author Brennen Davis
+ */
+
 package wowArmory;
 
 import java.awt.EventQueue;
@@ -131,23 +135,27 @@ public class GUI implements PropertyChangeListener{
 		});
 		
 		execute = new Execute();
-		
+				
 		topHalf();
 		bottomHalf();
 		
 		playerInfo = new String[] {
-				playerOneServer, playerOneName, playerTwoServer, playerTwoName, playerThreeServer, playerThreeName, playerFourServer, playerFourName,
-				playerFiveServer, playerFiveName, playerSixServer, playerSixName, playerSevenServer, playerSevenName, playerEightServer, playerEightName,
-				playerNineServer, playerNineName, playerTenServer, playerTenName, playerElevenServer, playerElevenName, playerTwelveServer, playerTwelveName,
+			playerOneServer, playerOneName, playerTwoServer, playerTwoName, playerThreeServer, playerThreeName, playerFourServer, playerFourName,
+			playerFiveServer, playerFiveName, playerSixServer, playerSixName, playerSevenServer, playerSevenName, playerEightServer, playerEightName,
+			playerNineServer, playerNineName, playerTenServer, playerTenName, playerElevenServer, playerElevenName, playerTwelveServer, playerTwelveName
 		};
 		
-		playerTextFields = new JFormattedTextField[]{
+		playerTextFields = new JFormattedTextField[] {
 				txtPlayerOneServer, txtPlayerOneName, txtPlayerTwoServer, txtPlayerTwoName, txtPlayerThreeServer,
 				txtPlayerThreeName, txtPlayerFourServer, txtPlayerFourName, txtPlayerFiveServer, txtPlayerFiveName,
 				txtPlayerSixServer, txtPlayerSixName, txtPlayerSevenServer, txtPlayerSevenName, txtPlayerEightServer, 
 				txtPlayerEightName, txtPlayerNineServer, txtPlayerNineName, txtPlayerTenServer, txtPlayerTenName, 
-				txtPlayerElevenServer, txtPlayerElevenName, txtPlayerTwelveServer, txtPlayerTwelveName,
+				txtPlayerElevenServer, txtPlayerElevenName, txtPlayerTwelveServer, txtPlayerTwelveName
 		};
+		
+		//System.out.println(playerInfo.length);
+		//System.out.println(playerTextFields.length);
+		
 	}
 	
 	private void getStats(){
@@ -165,22 +173,22 @@ public class GUI implements PropertyChangeListener{
 					+ playerOneServer + "/" + playerOneName + "/advanced", playerOneName, playerOneServer);
 			setErrorMessage(playerOneError);
 		}
-		if(playerTwoServer != null && playerTwoName != null){
+		if(playerTwoServer != null && playerTwoName != null && playerTwoServer != "" && playerTwoName != ""){
 			String playerTwoError = execute.pullElements(driver, "http://us.battle.net/wow/en/character/" 
 					+ playerTwoServer + "/" + playerTwoName + "/advanced", playerTwoName, playerTwoServer);
 			setErrorMessage(playerTwoError);
 		}
-		if(playerThreeServer != null && playerThreeName != null){
+		if(playerThreeServer != null && playerThreeName != null && playerThreeServer != "" && playerThreeName != ""){
 			String playerThreeError = execute.pullElements(driver, "http://us.battle.net/wow/en/character/" 
 					+ playerThreeServer + "/" + playerThreeName + "/advanced", playerThreeName, playerThreeServer);
 			setErrorMessage(playerThreeError);
 		}
-		if(playerFourServer != null && playerFourName != null){
+		if(playerFourServer != null && playerFourName != null && playerFourServer != "" && playerFourName != ""){
 			String playerFourError = execute.pullElements(driver, "http://us.battle.net/wow/en/character/" 
 					+ playerFourServer + "/" + playerFourName + "/advanced", playerFourName, playerFourServer);
 			setErrorMessage(playerFourError);
 		}
-		if(playerFiveServer != null && playerFiveName != null){
+		if(playerFiveServer != null && playerFiveName != null && playerFiveServer != "" && playerFiveName != ""){
 			String playerFiveError = execute.pullElements(driver, "http://us.battle.net/wow/en/character/" 
 					+ playerFiveServer + "/" + playerFiveName + "/advanced", playerFiveName, playerFiveServer);
 			setErrorMessage(playerFiveError);
@@ -190,32 +198,32 @@ public class GUI implements PropertyChangeListener{
 					+ playerSixServer + "/" + playerSixName + "/advanced", playerSixName, playerSixServer);
 			setErrorMessage(playerSixError);
 		}
-		if(playerSevenServer != null && playerSevenName != null){
+		if(playerSevenServer != null && playerSevenName != null && playerSevenServer != "" && playerSevenName != ""){
 			String playerSevenError = execute.pullElements(driver, "http://us.battle.net/wow/en/character/" 
 					+ playerSevenServer + "/" + playerSevenName + "/advanced", playerSevenName, playerSevenServer);
 			setErrorMessage(playerSevenError);
 		}
-		if(playerEightServer != null && playerEightName != null){
+		if(playerEightServer != null && playerEightName != null && playerEightServer != "" && playerEightName != ""){
 			String playerEightError = execute.pullElements(driver, "http://us.battle.net/wow/en/character/" 
 					+ playerEightServer + "/" + playerEightName + "/advanced", playerEightName, playerEightServer);
 			setErrorMessage(playerEightError);
 		}
-		if(playerNineServer != null && playerNineName != null){
+		if(playerNineServer != null && playerNineName != null && playerNineServer != "" && playerNineName != ""){
 			String playerNineError = execute.pullElements(driver, "http://us.battle.net/wow/en/character/" 
 					+ playerNineServer + "/" + playerNineName + "/advanced", playerNineName, playerNineServer);
 			setErrorMessage(playerNineError);
 		}
-		if(playerTenServer != null && playerTenName != null){
+		if(playerTenServer != null && playerTenName != null && playerTenServer != "" && playerTenName != ""){
 			String playerTenError = execute.pullElements(driver, "http://us.battle.net/wow/en/character/" 
 					+ playerTenServer + "/" + playerTenName + "/advanced", playerTenName, playerTenServer);
 			setErrorMessage(playerTenError);
 		}
-		if(playerElevenServer != null && playerElevenName != null){
+		if(playerElevenServer != null && playerElevenName != null && playerElevenServer != "" && playerElevenName != ""){
 			String playerElevenError = execute.pullElements(driver, "http://us.battle.net/wow/en/character/" 
 					+ playerElevenServer + "/" + playerElevenName + "/advanced", playerElevenName, playerElevenServer);
 			setErrorMessage(playerElevenError);
 		}
-		if(playerTwelveServer != null && playerTwelveName != null){
+		if(playerTwelveServer != null && playerTwelveName != null && playerTwelveServer != "" && playerTwelveName != ""){
 			String playerTwelveError = execute.pullElements(driver, "http://us.battle.net/wow/en/character/" 
 					+ playerTwelveServer + "/" + playerTwelveName + "/advanced", playerTwelveName, playerTwelveServer);
 			setErrorMessage(playerTwelveError);
@@ -269,13 +277,70 @@ public class GUI implements PropertyChangeListener{
 		frame.getContentPane().add(btnClearInfo);
 		btnClearInfo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				for(int i = 0; i < playerInfo.length; i++){
-					playerInfo[i] = null;
-				}
+				txtPlayerOneServer.setText("");
+				txtPlayerOneName.setText(""); 
+				txtPlayerTwoServer.setText(""); 
+				txtPlayerTwoName.setText(""); 
+				txtPlayerThreeServer.setText("");
+				txtPlayerThreeName.setText(""); 
+				txtPlayerFourServer.setText(""); 
+				txtPlayerFourName.setText(""); 
+				txtPlayerFiveServer.setText(""); 
+				txtPlayerFiveName.setText("");
+				txtPlayerSixServer.setText(""); 
+				txtPlayerSixName.setText(""); 
+				txtPlayerSevenServer.setText("");
+				txtPlayerSevenName.setText(""); 
+				txtPlayerEightServer.setText(""); 
+				txtPlayerEightName.setText(""); 
+				txtPlayerNineServer.setText(""); 
+				txtPlayerNineName.setText(""); 
+				txtPlayerTenServer.setText(""); 
+				txtPlayerTenName.setText("");				
+				txtPlayerElevenServer.setText(""); 
+				txtPlayerElevenName.setText(""); 
+				txtPlayerTwelveServer.setText(""); 
+				txtPlayerTwelveName.setText("");
 				
-				for(int i = 0; i < playerTextFields.length; i++){
-					playerTextFields[i].setText(null);
-				}
+				playerOneServer = null; 
+				playerOneName = null; 
+				playerTwoServer = null; 
+				playerTwoName = null; 
+				playerThreeServer = null; 
+				playerThreeName = null; 
+				playerFourServer = null; 
+				playerFourName = null;
+				playerFiveServer = null; 
+				playerFiveName = null; 
+				playerSixServer = null;
+				playerSixName = null; 
+				playerSevenServer = null; 
+				playerSevenName = null; 
+				playerEightServer = null; 
+				playerEightName = null;
+				playerNineServer = null; 
+				playerNineName = null; 
+				playerTenServer = null; 
+				playerTenName = null; 
+				playerElevenServer = null; 
+				playerElevenName = null; 
+				playerTwelveServer = null; 
+				playerTwelveName = null;
+	
+				errorMessage = "";
+				lblFileNameError.setText("");
+				
+				//Can't get the looping to work properly to clear the text and the string.
+//				for(int i = 0; i < playerTextFields.length; i++){
+//					playerTextFields[i] = new JFormattedTextField();
+//					playerTextFields[i].setText("poop");
+//				}
+//				
+//				for(int i = 0; i < playerInfo.length; i++){		
+//					playerInfo[i] = null;
+//				}
+//				System.out.println(playerOneServer);
+//				System.out.println(txtPlayerOneServer.getText());
 			}
 		});
 		
@@ -290,9 +355,7 @@ public class GUI implements PropertyChangeListener{
 		lblFileNameError.setForeground(Color.RED);
 		lblFileNameError.setBounds(178, 413, 243, 23);
 		frame.getContentPane().add(lblFileNameError);
-		
-		
-		
+
 	}
 
 	private void txtFields() {
@@ -417,99 +480,149 @@ public class GUI implements PropertyChangeListener{
 		txtPlayerTwelveName.addPropertyChangeListener("value", this);	
 	}
 	
-	//TODO: find a way to be rid of tab in the text fields
-	//allows user not to need to press enter after entering character info
 		public void propertyChange(PropertyChangeEvent e) {
 			Object source = e.getSource();
 			if(source == txtPlayerOneServer){
-				playerOneServer = txtPlayerOneServer.getText();
-				playerOneServer = textCleanUp(playerOneServer);
+				if(txtPlayerOneServer.getText().length() > 1){
+					playerOneServer = txtPlayerOneServer.getText();
+//					playerOneServer = textCleanUp(playerOneServer);
+				}
 			}else if(source == txtPlayerOneName){
-				playerOneName = txtPlayerOneName.getText();
-				playerOneName = textCleanUp(playerOneName);
+				if(txtPlayerOneName.getText().length() > 1){
+					playerOneName = txtPlayerOneName.getText();
+//					playerOneName = textCleanUp(playerOneName);
+				}
 			}else if(source == txtPlayerTwoServer){
-				playerTwoServer = txtPlayerTwoServer.getText();
-				textCleanUp(playerTwoServer);
+				if(txtPlayerTwoServer.getText().length() > 1){
+					playerTwoServer = txtPlayerTwoServer.getText();
+//					textCleanUp(playerTwoServer);
+				}
 			}else if(source == txtPlayerTwoName){
-				playerTwoName = txtPlayerTwoName.getText();
-				textCleanUp(playerTwoName);
+				if(txtPlayerTwoName.getText().length() > 1){
+					playerTwoName = txtPlayerTwoName.getText();
+//					textCleanUp(playerTwoName);
+				}
 			}else if(source == txtPlayerThreeServer){
-				playerThreeServer = txtPlayerThreeServer.getText();
-				textCleanUp(playerThreeServer);
+				if(txtPlayerThreeServer.getText().length() > 1){
+					playerThreeServer = txtPlayerThreeServer.getText();
+//					textCleanUp(playerThreeServer);
+				}
 			}else if(source == txtPlayerThreeName){
-				playerThreeName = txtPlayerThreeName.getText();
-				textCleanUp(playerThreeName);
+				if(txtPlayerThreeName.getText().length() > 1){
+					playerThreeName = txtPlayerThreeName.getText();
+//					textCleanUp(playerThreeName);
+				}
 			}else if(source == txtPlayerFourServer){
-				playerFourServer = txtPlayerFourServer.getText();
-				textCleanUp(playerFourServer);
+				if(txtPlayerFourServer.getText().length() > 1){
+					playerFourServer = txtPlayerFourServer.getText();
+//					textCleanUp(playerFourServer);
+				}
 			}else if(source == txtPlayerFourName){
-				playerFourName = txtPlayerFourName.getText();
-				textCleanUp(playerFourName);
+				if(txtPlayerFourName.getText().length() > 1){
+					playerFourName = txtPlayerFourName.getText();
+//					textCleanUp(playerFourName);
+				}
 			}else if(source == txtPlayerFiveServer){
-				playerFiveServer = txtPlayerFiveServer.getText();
-				textCleanUp(playerFiveServer);
+				if(txtPlayerFiveServer.getText().length() > 1){
+					playerFiveServer = txtPlayerFiveServer.getText();
+//					textCleanUp(playerFiveServer);
+				}
 			}else if(source == txtPlayerFiveName){
-				playerFiveName = txtPlayerFiveName.getText();
-				textCleanUp(playerFiveName);
+				if(txtPlayerFiveName.getText().length() > 1){
+					playerFiveName = txtPlayerFiveName.getText();
+//					textCleanUp(playerFiveName);
+				}
 			}else if(source == txtPlayerSixServer){
-				playerSixServer = txtPlayerSixServer.getText();
-				textCleanUp(playerSixServer);
+				if(txtPlayerSixServer.getText().length() > 1){
+					playerSixServer = txtPlayerSixServer.getText();
+//					textCleanUp(playerSixServer);
+				}
 			}else if(source == txtPlayerSixName){
-				playerSixName = txtPlayerSixName.getText();
-				textCleanUp(playerSixName);
+				if(txtPlayerSixName.getText().length() > 1){
+					playerSixName = txtPlayerSixName.getText();
+//					textCleanUp(playerSixName);
+				}
 			}else if(source == txtPlayerSevenServer){
-				playerSevenServer = txtPlayerSevenServer.getText();
-				textCleanUp(playerSevenServer);
+				if(txtPlayerSevenServer.getText().length() > 1){
+					playerSevenServer = txtPlayerSevenServer.getText();
+//					textCleanUp(playerSevenServer);
+				}
 			}else if(source == txtPlayerSevenName){
-				playerSevenName = txtPlayerSevenName.getText();
-				textCleanUp(playerSevenName);
+				if(txtPlayerSevenName.getText().length() > 1){
+					playerSevenName = txtPlayerSevenName.getText();
+//					textCleanUp(playerSevenName);
+				}
 			}else if(source == txtPlayerEightServer){
-				playerEightServer = txtPlayerEightServer.getText();
-				textCleanUp(playerEightServer);
+				if(txtPlayerEightServer.getText().length() > 1){
+					playerEightServer = txtPlayerEightServer.getText();
+//					textCleanUp(playerEightServer);
+				}
 			}else if(source == txtPlayerEightName){
-				playerEightName = txtPlayerEightName.getText();
-				textCleanUp(playerEightName);
+				if(txtPlayerEightName.getText().length() > 1){
+					playerEightName = txtPlayerEightName.getText();
+//					textCleanUp(playerEightName);
+				}
 			}else if(source == txtPlayerNineServer){
-				playerNineServer = txtPlayerNineServer.getText();
-				textCleanUp(playerNineServer);
+				if(txtPlayerNineServer.getText().length() > 1){
+					playerNineServer = txtPlayerNineServer.getText();
+//					textCleanUp(playerNineServer);
+				}
 			}else if(source == txtPlayerNineName){
-				playerNineName = txtPlayerNineName.getText();
-				textCleanUp(playerNineName);
+				if(txtPlayerNineName.getText().length() > 1){
+					playerNineName = txtPlayerNineName.getText();
+//					textCleanUp(playerNineName);
+				}
 			}else if(source == txtPlayerTenServer){
-				playerTenServer = txtPlayerTenServer.getText();
-				textCleanUp(playerTenServer);
+				if(txtPlayerTenServer.getText().length() > 1){
+					playerTenServer = txtPlayerTenServer.getText();
+//					textCleanUp(playerTenServer);
+				}
 			}else if(source == txtPlayerTenName){
-				playerTenName = txtPlayerTenName.getText();
-				textCleanUp(playerTenName);
+				if(txtPlayerTenName.getText().length() > 1){
+					playerTenName = txtPlayerTenName.getText();
+//					textCleanUp(playerTenName);
+				}
 			}else if(source == txtPlayerElevenServer){
-				playerElevenServer = txtPlayerElevenServer.getText();
-				textCleanUp(playerElevenServer);
+				if(txtPlayerElevenServer.getText().length() > 1){
+					playerElevenServer = txtPlayerElevenServer.getText();
+//					textCleanUp(playerElevenServer);
+				}
 			}else if(source == txtPlayerElevenName){
-				playerElevenName = txtPlayerElevenName.getText();
-				textCleanUp(playerElevenName);
+				if(txtPlayerElevenName.getText().length() > 1){
+					playerElevenName = txtPlayerElevenName.getText();
+//					textCleanUp(playerElevenName);
+				}
 			}else if(source == txtPlayerTwelveServer){
-				playerTwelveServer = txtPlayerTwelveServer.getText();
-				textCleanUp(playerTwelveServer);
+				if(txtPlayerTwelveServer.getText().length() > 1){
+					playerTwelveServer = txtPlayerTwelveServer.getText();
+//					textCleanUp(playerTwelveServer);
+				}
 			}else if(source == txtPlayerTwelveName){
-				playerTwelveName = txtPlayerTwelveName.getText();
-				textCleanUp(playerTwelveName);
+				if(txtPlayerTwelveName.getText().length() > 1){
+					playerTwelveName = txtPlayerTwelveName.getText();
+//					textCleanUp(playerTwelveName);
+				}
 			}else if(source == txtFileName){
-				fileName = txtFileName.getText();
+				if(txtFileName.getText().length() > 1){
+					fileName = txtFileName.getText();
+				}
 			}
 		}
 
+		/**
+		 * Potentially could be used for strange char letters in names to make them URL-ready.
+		 * 
+		 * @param inString - string to be changed. Server and Name strings.
+		 * @return String - Provides the string with the URL-read strange chars
+		 */
 		private String textCleanUp(String inString) {
-			//If text field is tabbed through, the text field will take
-			//the tab as an input and call the pullElements method with blank as server and name.
-			//TODO: find a way to get rid of the tab if user tabs through text fields
 			
-			//currently not working
+			//currently not available
 			String outString;
 			outString = inString.replace("\t", "");
 			
 			return outString;
-			
-			
+						
 		}
 
 	private void lblInstructions() {
