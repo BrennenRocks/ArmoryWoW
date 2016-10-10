@@ -5,6 +5,7 @@
 
 package wowArmory;
 
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
@@ -14,17 +15,21 @@ public class Execute {
 	
 	private ArrayList<String> slotsString = new ArrayList<String>();
 
+
 	/**
 	 * Pull Elements will go to the player's armory page and get the player's iLvl and Armory iLvl. 
-	 * If the URL or an Item is not available or being worn it will let you know.
+	 * If the URL or an Item is not available or equipped it will let you know.
 	 * 
 	 * @param driver - the WebDriver
 	 * @param url - URL to which the driver will go to
 	 * @param player - which Player is currently calling pullElements
 	 * @param server - which Server is currently calling pullElements
-	 * @return String - an error message if needs be
+	 * @return String - Error Text
 	 */
-	public String pullElements(WebDriver driver, String url, String player, String server){	
+	public String pullElements(WebDriver driver, String url, String player, String server){
+		
+		String errorText = "";
+		ArrayList<String> mSlotsString = new ArrayList<String>();
 		
 		ArrayList<String> slotNames = new ArrayList<String>();
 		slotNames.add("");
@@ -50,15 +55,15 @@ public class Execute {
 		slotNames.add("");
 		slotNames.add("Main Hand: ");
 		slotNames.add("Offhand: ");
-		
-		try{		
+				
+		try{
 			driver.get(url);
 			Thread.sleep(2000);
 	
 			//Fill up the ArrayList!
 			//name
-			slotsString.add(driver.findElement(By.cssSelector("#profile-wrapper > div.profile-sidebar-anchor > div > div > div > div.profile-info-anchor > div > div.name > a")).getText());			
-			slotsString.add(driver.findElement(By.cssSelector("#profile-wrapper > div.profile-contents > div.summary-top > div.summary-top-right > div > div.rest > span")).getText() + " ,");
+			mSlotsString.add(driver.findElement(By.cssSelector("#profile-wrapper > div.profile-sidebar-anchor > div > div > div > div.profile-info-anchor > div > div.name > a")).getText());			
+			mSlotsString.add(driver.findElement(By.cssSelector("#profile-wrapper > div.profile-contents > div.summary-top > div.summary-top-right > div > div.rest > span")).getText() + " ,");
 					
 			//Armor
 			for(int i = 1; i < 23; i++){
@@ -71,11 +76,11 @@ public class Execute {
 					}else if(i == 17){
 						i = 21;
 					}
-				slotsString.add(slotNames.get(i));
-				slotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div.slot.slot-" + i + "> div > div > div > span.name-shadow")).getText() + ",");
+					mSlotsString.add(slotNames.get(i));
+					mSlotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div.slot.slot-" + i + "> div > div > div > span.name-shadow")).getText() + ",");
 
 				}catch (Exception e){
-					slotsString.add("Item not equipped" + ",");
+					mSlotsString.add("Item not equipped" + ",");
 					System.out.println("Item not equipped.");
 					//System.out.println(e.getMessage());
 				}
@@ -86,14 +91,14 @@ public class Execute {
 				//once again... ask blizzard about the strange numbers in their xpaths / cssSelectors
 				try{
 					if(i == 16){
-						slotsString.add("Trinket Two: ");
+						mSlotsString.add("Trinket Two: ");
 					}
 					if(i != 16){
-						slotsString.add(slotNames.get(i));
+						mSlotsString.add(slotNames.get(i));
 					}
-					slotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div:nth-child(" + i + ") > div > div > div > span.name-shadow")).getText() + ",");
+					mSlotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div:nth-child(" + i + ") > div > div > div > span.name-shadow")).getText() + ",");
 				}catch(Exception e){
-					slotsString.add("Item not equipped" + ",");
+					mSlotsString.add("Item not equipped" + ",");
 					System.out.println("Item not equipped.");
 					//System.out.println(e.getMessage());
 				}
@@ -110,9 +115,9 @@ public class Execute {
 					}else if(i == 17){
 						i = 21;
 					}
-				slotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div.slot.slot-" + i + "> div > div > div > span.level")).getText() + ",");
+					mSlotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div.slot.slot-" + i + "> div > div > div > span.level")).getText() + ",");
 				}catch (Exception e){
-					slotsString.add("Item not equipped" + ",");
+					mSlotsString.add("Item not equipped" + ",");
 					System.out.println("Item not equipped.");
 					//System.out.println(e.getMessage());
 				}
@@ -122,19 +127,33 @@ public class Execute {
 			for(int i = 13; i < 17; i++){
 				//once again... ask blizzard about the strange numbers in their xpaths / cssSelectors
 				try{
-					slotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div:nth-child(" + i + ") > div > div > div > span.level")).getText() + ",");
+					mSlotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div:nth-child(" + i + ") > div > div > div > span.level")).getText() + ",");
 				}catch(Exception e){
-					slotsString.add("Item not equipped" + ",");
+					mSlotsString.add("Item not equipped" + ",");
 					System.out.println("Item not equipped.");
 					//System.out.println(e.getMessage());
 				}
 			}
+			
+			//Puts the arraylist made in here into the global variable to be used by WriteToFile
+			compileArrayList(mSlotsString);
+			
 		}catch(Exception e){
 			//System.out.println(e.getMessage());
 			System.out.println("Couldn't find " + player + " on " + server + ".");
-			return "Couldn't find " + player + " on " + server + ". ";
+			return errorText = "Couldn't find " + player + " on " + server + ". ";
 		}
-		return "";
+		return errorText;
+	}
+	
+	/**
+	 * Adds each ArrayList made by pullElements into the global ArrayList slotsString
+	 * @param list - ArrayList from an instance of pullElements
+	 */
+	public synchronized void compileArrayList(ArrayList<String> list){
+		for(String slot : list){
+			slotsString.add(slot);
+		}
 	}
 	
 	/**
@@ -171,6 +190,4 @@ public class Execute {
 		slotsString.clear();
 		System.out.println("Done");
 	}
-	
-
 }
