@@ -1,6 +1,6 @@
 /**
  * @author Brennen Davis
- * @version 1.3
+ * @version 1.4
  */
 
 package wowArmory;
@@ -80,7 +80,7 @@ public class Execute {
 
 				}catch (Exception e){
 					mSlotsString.add("Item not equipped" + ",");
-					System.out.println("Item not equipped." + player);
+					System.out.println("Item not equipped." + player + " on " + server);
 					//System.out.println(e.getMessage());
 				}
 			}
@@ -98,7 +98,7 @@ public class Execute {
 					mSlotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div:nth-child(" + i + ") > div > div > div > span.name-shadow")).getText() + ",");
 				}catch(Exception e){
 					mSlotsString.add("Item not equipped" + ",");
-					System.out.println("Item not equipped." + player);
+					System.out.println("Item not equipped." + player + " on " + server);
 					//System.out.println(e.getMessage());
 				}
 			}
@@ -117,7 +117,7 @@ public class Execute {
 					mSlotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div.slot.slot-" + i + "> div > div > div > span.level")).getText() + ",");
 				}catch (Exception e){
 					mSlotsString.add("Item not equipped" + ",");
-					System.out.println("Item not equipped." + player);
+					System.out.println("Item not equipped." + player + " on " + server);
 					//System.out.println(e.getMessage());
 				}
 			}
@@ -129,7 +129,7 @@ public class Execute {
 					mSlotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div:nth-child(" + i + ") > div > div > div > span.level")).getText() + ",");
 				}catch(Exception e){
 					mSlotsString.add("Item not equipped" + ",");
-					System.out.println("Item not equipped." + player);
+					System.out.println("Item not equipped." + player + " on " + server);
 					//System.out.println(e.getMessage());
 				}
 			}
@@ -162,7 +162,6 @@ public class Execute {
 	 */
 	public void writeToFile(String filePath){
 
-		//try(PrintWriter writer = new PrintWriter(System.getProperty("user.home") + "/Desktop/"+filePath+".csv")){	
 		try(PrintWriter writer = new PrintWriter(filePath)){
 			int afterNameCounter = 0;
 			int ilvlLineCounter = 0;
@@ -189,6 +188,6 @@ public class Execute {
 		}
 		
 		slotsString.clear();
-		System.out.println("Done");
+		System.out.println("Done writing to the csv file.");
 	}
 }

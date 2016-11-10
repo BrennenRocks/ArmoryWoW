@@ -1,6 +1,6 @@
 /**
  * @author Brennen Davis
- * @version 1.3
+ * @version 1.4
  */
 package wowArmory;
 
@@ -10,6 +10,8 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -17,6 +19,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -42,9 +47,6 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 
-//TODO: Add ThreadPooling.
-//TODO: Add Loading state and Ready state
-
 public class NiceGUI extends JFrame implements PropertyChangeListener {
 
 	/**
@@ -60,13 +62,15 @@ public class NiceGUI extends JFrame implements PropertyChangeListener {
 	private ArrayList<JFormattedTextField> txtFields = new ArrayList<>();
 	private String[] charName = new String[numOfChars];
 	
-	@SuppressWarnings("rawtypes")
-	private ArrayList<JComboBox> servers = new ArrayList<>();
+	private ArrayList<JComboBox<String>> servers = new ArrayList<>();
+	private ArrayList<WebDriver> drivers = new ArrayList<>();
 
-	
 	private Execute execute;
 	private JFileChooser fc;
-	//private DesiredCapabilities caps = new DesiredCapabilities();
+	
+	//Limit the amount of Threads to be run at one time to the number of Available Processors in the machine times two
+	private int processorsx2 = Runtime.getRuntime().availableProcessors() * 2;
+
 
 	/**
 	 * Launch the application.
@@ -109,15 +113,26 @@ public class NiceGUI extends JFrame implements PropertyChangeListener {
 	 * Create the frame and sets up the PhantomJS Webdriver 
 	 */
 	public NiceGUI() {
-
+		System.out.println("Number of Processors on machine " + processorsx2 / 2);
 		//set up the WebDriver before the frame starts
 		System.setProperty("phantomjs.binary.path", loadPhantomJS());
+		//System.setProperty("phantomjs.binary.path", "src/resources/phantomjs.exe");
 		//System.setProperty("webdriver.chrome.driver", "src/resources/chromedriver.exe");
 		
 		execute = new Execute();
 		fc = new JFileChooser();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){
+				System.out.println("Closing any running Drivers.");
+				if(drivers.size() > 0){
+					for(WebDriver driver : drivers){
+						driver.quit();
+					}
+				}
+			}
+		});
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -147,7 +162,7 @@ public class NiceGUI extends JFrame implements PropertyChangeListener {
 		addTitlePanel(pane);
 		addCharactersPanel(pane);
 		addActionPanel(pane);
-		addErrorLabel(pane);
+		addUpdateLabels(pane);
 		
 	}
 	
@@ -187,28 +202,44 @@ public class NiceGUI extends JFrame implements PropertyChangeListener {
 		JPanel buttons = new JPanel();
 		addButton("Get iLvls", buttons, event -> {
 			fc.showOpenDialog(pane);
-			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			getStats();
+			
+			try {
+				this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				buttons.setEnabled(false);
+				getStats();
+				buttons.setEnabled(true);
+				this.setCursor(Cursor.getDefaultCursor());
+			} catch (InterruptedException e) {
+				System.out.println("Interrupted the awaitTermination method.");
+				e.printStackTrace();
+			}
 		});
 		
 		addButton("Clear", buttons, event -> {
+			for(int i = 0; i < charName.length; i++){
+				charName[i] = null;
+			}
+			
+			for(JComboBox<String> box : servers){
+				box.setSelectedItem(box.getItemAt(0));
+			}
 			for(JFormattedTextField txtField : txtFields){
 				txtField.setText(null);
 			}
+
 			lblErrorMessage.setText("");
 		});
 		
 		pane.add(buttons);
 	}
 	
-	private void addErrorLabel(Container pane){
+	private void addUpdateLabels(Container pane){
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
 		lblErrorMessage = new JLabel("");
 		lblErrorMessage.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblErrorMessage.setBackground(new Color(106, 90, 205));
 		lblErrorMessage.setForeground(new Color(255, 0, 0));
-		//lblErrorMessage.setBounds(10, 466, 604, 64);
 		bottomPanel.add(lblErrorMessage);
 
 		pane.add(bottomPanel);
@@ -273,61 +304,59 @@ public class NiceGUI extends JFrame implements PropertyChangeListener {
 	 * pull the iLvl for each character specified and calls writeToFile method
 	 * from Execute.java to write the .csv file.
 	 */
-	private void getStats(){
-		ArrayList<WebDriver> drivers = new ArrayList<>();
-		ArrayList<Thread> playerThreads = new ArrayList<>();
+	private void getStats() throws InterruptedException{
+		ExecutorService execGetStats = Executors.newFixedThreadPool(processorsx2);
+		ExecutorService execDrivers = Executors.newFixedThreadPool(processorsx2);
 		
 		//clear the error message before getting stats
 		lblErrorMessage.setText(null);
 		
-		int count = 0;
+		//It takes time for the drivers to start up. We start all the necessary drivers
+		//here before the threads execute to ensure each thread will actually have a driver when
+		//the thread tries to use it.
 		for(int i = 0; i < charName.length; i++){
-			//Workaround ints in order for them to be visible inside of the 
-			//creation of the threads.
 			int f = i;
-			int threadI = count;
-			
-			if(charName[i] != null ){		
+			if(charName[i] != null){
 				Runnable r = () -> {
-					//drivers.add(new ChromeDriver());
 					drivers.add(new PhantomJSDriver());
-					try{
-						Thread.sleep(2000);
-						
-						//drivers.get(NEEDS TO START AT 0 AND INCREASE BY 1 FOR EACH NEW THREAD); 
-						//int threadI is the workaround to get this to work
-						boolean characterFound = execute.pullElements(drivers.get(threadI), "http://us.battle.net/wow/en/character/"
-								+ servers.get(f).getSelectedItem().toString() + "/" + charName[f] + "/advanced",
-								charName[f], servers.get(f).getSelectedItem().toString());
-						
-						if(!characterFound){
+					System.out.println("Driver for slot " + f + " created.");
+				};
+				execDrivers.execute(r);
+			}
+		}
+		
+		execDrivers.shutdown();
+		//Forces the program to wait here until all threads are complete
+		execDrivers.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+
+		
+		for(int i = 0; i < drivers.size(); i++){	
+			int f = i;
+				Runnable r = () -> {
+					System.out.println("Thread : " + f + " start.");
+
+					boolean characterFound = execute.pullElements(drivers.get(f), "http://us.battle.net/wow/en/character/"
+							+ servers.get(f).getSelectedItem().toString() + "/" + charName[f] + "/advanced",
+							charName[f], servers.get(f).getSelectedItem().toString());
+					
+					if(!characterFound){
+						if(lblErrorMessage.getText() == null){
 							lblErrorMessage.setText("Couldn't find " + charName[f] + " on " + servers.get(f).getSelectedItem().toString() + ". ");
+						}else{
+							lblErrorMessage.setText(lblErrorMessage.getText() + " Couldn't find " + charName[f] + " on " + servers.get(f).getSelectedItem().toString() + ". ");
 						}
-					}catch(InterruptedException e){
-						e.printStackTrace();
-						System.out.println("Thread did not sleep properly.");
+
 					}	
 				};
-				playerThreads.add(new Thread(r));
-				count++;	
-			}
-			
-			
+				execGetStats.execute(r);
 		}
 		
-		for(Thread thread : playerThreads){
-			thread.start();
-		}
 		
+		execGetStats.shutdown();
 		//Forces the program to wait here until all threads are complete
-		for(Thread thread : playerThreads){	
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				System.out.println(e.getMessage());
-				System.out.println("Problem joining threads.");
-			}
-		}
+		execGetStats.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+
+		
 		
 		//TODO: Ensure the file the user types ends in .csv. (May still need a few more checks)
 		String fileName = fc.getSelectedFile().toString();
@@ -343,13 +372,13 @@ public class NiceGUI extends JFrame implements PropertyChangeListener {
 		}
 
 		
-		//Clear the threads and drivers to be able to run the program again
-		playerThreads.clear();
+		//Clear the drivers to be able to run the program again
+		System.out.println("Program complete, shutting down WebDrivers");
 		for(WebDriver driver : drivers){
 			driver.quit();
 		}
 		drivers.clear();
-		this.setCursor(Cursor.getDefaultCursor());
+
 	}
 	
 	/**
