@@ -1,6 +1,6 @@
 /**
  * @author Brennen Davis
- * @version 1.0
+ * @version 1.3
  */
 
 package wowArmory;
@@ -24,11 +24,10 @@ public class Execute {
 	 * @param url - URL to which the driver will go to
 	 * @param player - which Player is currently calling pullElements
 	 * @param server - which Server is currently calling pullElements
-	 * @return String - Error Text
+	 * @return Boolean - Returns true if character is found
 	 */
-	public String pullElements(WebDriver driver, String url, String player, String server){
+	public boolean pullElements(WebDriver driver, String url, String player, String server){
 		
-		String errorText = "";
 		ArrayList<String> mSlotsString = new ArrayList<String>();
 		
 		ArrayList<String> slotNames = new ArrayList<String>();
@@ -81,7 +80,7 @@ public class Execute {
 
 				}catch (Exception e){
 					mSlotsString.add("Item not equipped" + ",");
-					System.out.println("Item not equipped.");
+					System.out.println("Item not equipped." + player);
 					//System.out.println(e.getMessage());
 				}
 			}
@@ -93,13 +92,13 @@ public class Execute {
 					if(i == 16){
 						mSlotsString.add("Trinket Two: ");
 					}
-					if(i != 16){
+					else{
 						mSlotsString.add(slotNames.get(i));
 					}
 					mSlotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div:nth-child(" + i + ") > div > div > div > span.name-shadow")).getText() + ",");
 				}catch(Exception e){
 					mSlotsString.add("Item not equipped" + ",");
-					System.out.println("Item not equipped.");
+					System.out.println("Item not equipped." + player);
 					//System.out.println(e.getMessage());
 				}
 			}
@@ -118,7 +117,7 @@ public class Execute {
 					mSlotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div.slot.slot-" + i + "> div > div > div > span.level")).getText() + ",");
 				}catch (Exception e){
 					mSlotsString.add("Item not equipped" + ",");
-					System.out.println("Item not equipped.");
+					System.out.println("Item not equipped." + player);
 					//System.out.println(e.getMessage());
 				}
 			}
@@ -130,7 +129,7 @@ public class Execute {
 					mSlotsString.add(driver.findElement(By.cssSelector("#summary-inventory > div:nth-child(" + i + ") > div > div > div > span.level")).getText() + ",");
 				}catch(Exception e){
 					mSlotsString.add("Item not equipped" + ",");
-					System.out.println("Item not equipped.");
+					System.out.println("Item not equipped." + player);
 					//System.out.println(e.getMessage());
 				}
 			}
@@ -139,15 +138,16 @@ public class Execute {
 			compileArrayList(mSlotsString);
 			
 		}catch(Exception e){
-			//System.out.println(e.getMessage());
-			System.out.println("Couldn't find " + player + " on " + server + ".");
-			return errorText = "Couldn't find " + player + " on " + server + ". ";
+
+			return false;
 		}
-		return errorText;
+		return true;
 	}
 	
 	/**
 	 * Adds each ArrayList made by pullElements into the global ArrayList slotsString
+	 * It is synchronized so that only one thread may write to it at a time keeping the items for
+	 * each player in order.
 	 * @param list - ArrayList from an instance of pullElements
 	 */
 	public synchronized void compileArrayList(ArrayList<String> list){
@@ -162,7 +162,8 @@ public class Execute {
 	 */
 	public void writeToFile(String filePath){
 
-		try(PrintWriter writer = new PrintWriter(System.getProperty("user.home") + "/Desktop/"+filePath+".csv")){				
+		//try(PrintWriter writer = new PrintWriter(System.getProperty("user.home") + "/Desktop/"+filePath+".csv")){	
+		try(PrintWriter writer = new PrintWriter(filePath)){
 			int afterNameCounter = 0;
 			int ilvlLineCounter = 0;
 			//WRITE THE CSV FILE
