@@ -115,8 +115,8 @@ public class NiceGUI extends JFrame implements PropertyChangeListener {
 	public NiceGUI() {
 		System.out.println("Number of Processors on machine " + processorsx2 / 2);
 		//set up the WebDriver before the frame starts
-		//System.setProperty("phantomjs.binary.path", loadPhantomJS());
-		System.setProperty("phantomjs.binary.path", "src/resources/phantomjs.exe");
+		System.setProperty("phantomjs.binary.path", loadPhantomJS());
+		//System.setProperty("phantomjs.binary.path", "src/resources/phantomjs.exe");
 		//System.setProperty("webdriver.chrome.driver", "src/resources/chromedriver.exe");
 		
 		execute = new Execute();
