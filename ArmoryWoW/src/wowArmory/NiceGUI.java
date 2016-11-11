@@ -115,8 +115,8 @@ public class NiceGUI extends JFrame implements PropertyChangeListener {
 	public NiceGUI() {
 		System.out.println("Number of Processors on machine " + processorsx2 / 2);
 		//set up the WebDriver before the frame starts
-		System.setProperty("phantomjs.binary.path", loadPhantomJS());
-		//System.setProperty("phantomjs.binary.path", "src/resources/phantomjs.exe");
+		//System.setProperty("phantomjs.binary.path", loadPhantomJS());
+		System.setProperty("phantomjs.binary.path", "src/resources/phantomjs.exe");
 		//System.setProperty("webdriver.chrome.driver", "src/resources/chromedriver.exe");
 		
 		execute = new Execute();
@@ -329,16 +329,19 @@ public class NiceGUI extends JFrame implements PropertyChangeListener {
 		//Forces the program to wait here until all threads are complete
 		execDrivers.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
-		
-		for(int i = 0; i < drivers.size(); i++){	
+		int count = 0;
+		for(int i = 0; i < charName.length; i++){	
 			int f = i;
+			
+			if(charName[i] != null){
+				int threadCount = count;
 				Runnable r = () -> {
-					System.out.println("Thread : " + f + " start.");
+					System.out.println("Thread : " + threadCount + " start.");
 
-					boolean characterFound = execute.pullElements(drivers.get(f), "http://us.battle.net/wow/en/character/"
+					boolean characterFound = execute.pullElements(drivers.get(threadCount), "http://us.battle.net/wow/en/character/"
 							+ servers.get(f).getSelectedItem().toString() + "/" + charName[f] + "/advanced",
 							charName[f], servers.get(f).getSelectedItem().toString());
-					
+									
 					if(!characterFound){
 						if(lblErrorMessage.getText() == null){
 							lblErrorMessage.setText("Couldn't find " + charName[f] + " on " + servers.get(f).getSelectedItem().toString() + ". ");
@@ -349,6 +352,8 @@ public class NiceGUI extends JFrame implements PropertyChangeListener {
 					}	
 				};
 				execGetStats.execute(r);
+				count++;
+			}		
 		}
 		
 		
